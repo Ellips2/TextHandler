@@ -7,7 +7,11 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <PackageReference Include="NUnit" Version="3.13.3" />
+    <PackageReference Include="OpenNLP.NET" Version="1.9.4.1" />
     <PackageReference Include="Prism.Core" Version="8.1.97" />
+    <PackageReference Include="sautinsoft.document" Version="2023.4.19" />
+    <PackageReference Include="Tokenizer" Version="2.2.2" />
   </ItemGroup>
 
 </Project>

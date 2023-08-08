@@ -22,8 +22,9 @@ namespace TextHandler
     public partial class MainWindow : Window
     {
         public MainWindow()
-        {
+        {            
             InitializeComponent();
+            //DataContext = new MainViewModel(new DialogService(), new FileService());
         }
         private void NumberValidationTextBox(object sender, TextCompositionEventArgs e)
         {

@@ -6,7 +6,7 @@
         xmlns:local="clr-namespace:TextHandler"
         xmlns:viewModel="clr-namespace:TextHandler.MVVM.ViewModel"
         mc:Ignorable="d"
-        Title="MainWindow" Height="600" Width="900" viewModel:WindowCloser.EnableWindowClosing="True"
+        Title="MainWindow" Height="600" Width="900"
         WindowStyle="None"
         ResizeMode="NoResize"
         Background="Transparent"
@@ -39,45 +39,53 @@
 
             <StackPanel Grid.Row="1">
                 <Button Content="Load Files"
-                             Height="50" 
-                             Foreground="White"
-                             FontSize="14"
-                             Style="{StaticResource SideBarButtonTheme}"                             
-                             Command="{Binding HomeViewCommand}"/>                
-                <TextBox Text="Min word length"
+                        Height="50" 
+                        Foreground="White"
+                        FontSize="14"
+                        Style="{StaticResource SideBarButtonTheme}"                             
+                        Command="{Binding OpenFileCommand}"/>
+                <TextBox Text="{Binding MinLength, UpdateSourceTrigger=PropertyChanged}"
                          Grid.Column="1"
                          Height="40"
                          Width="200"
                          VerticalAlignment="Center"
                          HorizontalAlignment="Left"
                          Margin="0,5,0,0"
-                         Style="{StaticResource ModernTextbox}"
+                         Background="#353340"
+                         Foreground="#CFCFCF"
+                         BorderThickness="0"
+                         Padding="5"
                          PreviewTextInput="NumberValidationTextBox"/>
-                <TextBox Text="Сhars to remove (use spaces)"
+                <TextBox Text="{Binding CharsForDel, UpdateSourceTrigger=PropertyChanged}"
                          Grid.Column="1"
                          Height="40"
                          Width="200"
                          VerticalAlignment="Center"
                          HorizontalAlignment="Left"
                          Margin="0,5,0,0"
-                         Style="{StaticResource ModernTextbox}"/>
+                         Background="#353340"
+                         Foreground="#CFCFCF"
+                         BorderThickness="0"
+                         Padding="5"/>
                 <Button Content="Start!"
-                             Height="50" 
-                             Foreground="White"
-                             FontSize="14"                        
-                             VerticalAlignment="Bottom"
-                             Style="{StaticResource SideBarButtonTheme}"/>
+                        Height="50" 
+                        Foreground="White"
+                        FontSize="14"                        
+                        VerticalAlignment="Bottom"
+                        Style="{StaticResource SideBarButtonTheme}"
+                        Command="{Binding StartWorkCommand}"/>
                 <Button Content="Save Files"
-                             Height="50" 
-                             Foreground="White"
-                             FontSize="14"
-                             Style="{StaticResource SideBarButtonTheme}"
-                             Command="{Binding DiscoveryViewCommand}"/>
+                        Height="50" 
+                        Foreground="White"
+                        FontSize="14"
+                        Style="{StaticResource SideBarButtonTheme}"
+                        Command="{Binding SaveFileCommand}" />
                 <Button Content="Save in One"
-                             Height="50" 
-                             Foreground="White"
-                             FontSize="14"                        
-                             Style="{StaticResource SideBarButtonTheme}"/>
+                        Height="50" 
+                        Foreground="White"
+                        FontSize="14"                        
+                        Style="{StaticResource SideBarButtonTheme}"
+                        Command="{Binding SaveFileCommand}" />
             </StackPanel>
 
             <StackPanel Grid.Row="1" Grid.Column="1" Background="#222c">
@@ -88,45 +96,42 @@
                    Margin="0,10,0,0"
                    FontSize="14"
                    Grid.Column="1" Grid.Row="1"/>
-                <StackPanel>
-                    
-                </StackPanel>
             </StackPanel>
 
             <StackPanel Grid.Row="1" Grid.Column="2">
                 <Label Content="Before Process" 
-                   Foreground="White"
-                   HorizontalAlignment="Center"
-                   VerticalAlignment="Top"
-                   Margin="0,10,0,0"
-                   FontSize="14"
-                   Grid.Column="2" Grid.Row="1"/>
-                <ScrollViewer VerticalScrollBarVisibility="Visible">
-                    <TextBlock Grid.Column="1" 
-                         Margin="5,0,5,0"
-                         TextWrapping="Wrap"
-                         Text="ssssssffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffаыffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffва"
-                         TextAlignment="Left"
-                         Foreground="Gray"
-                         Height="512"
-                         ScrollViewer.CanContentScroll="True"/>
-                </ScrollViewer>                    
+                        Foreground="White"
+                        HorizontalAlignment="Center"
+                        VerticalAlignment="Top"
+                        Margin="0,10,0,0"
+                        FontSize="14"/>
+                <TextBox
+                        Margin="5,0,5,0"
+                        TextWrapping="Wrap"
+                        Text="{Binding NewText, UpdateSourceTrigger=PropertyChanged}"
+                        TextAlignment="Left"
+                        Foreground="Gray"
+                        Background="Transparent"
+                        Height="510" 
+                        VerticalScrollBarVisibility="Auto"/>
             </StackPanel>
 
             <StackPanel Grid.Row="1" Grid.Column="3">
                 <Label Content="After Process" 
-                   Foreground="White"
-                   HorizontalAlignment="Center"
-                   VerticalAlignment="Top"
-                   Margin="0,10,0,0"
-                   FontSize="14"
-                   Grid.Column="3" Grid.Row="1"/>
-                <ScrollViewer VerticalScrollBarVisibility="Visible">
-                    <TextBlock Grid.Column="1"
-                         HorizontalAlignment="Stretch"
-                         Margin="5,0,0,0"
-                         Height="512"/>
-                </ScrollViewer>
+                       Foreground="White"
+                       HorizontalAlignment="Center"
+                       VerticalAlignment="Top"
+                       Margin="0,10,0,0"
+                       FontSize="14"
+                       Grid.Column="3" Grid.Row="1"/>
+                <TextBox Margin="5,0,10,0"
+                         TextWrapping="Wrap"
+                         Text="{Binding PostText, UpdateSourceTrigger=PropertyChanged}"
+                         TextAlignment="Left"
+                         Foreground="White"
+                         Height="510"
+                         Background="Transparent"
+                         VerticalScrollBarVisibility="Auto"/>
             </StackPanel>
 
             <Button Content="X" 
@@ -137,7 +142,23 @@
                     Grid.Column="3" 
                     Margin="10"
                     Style="{StaticResource TitleBarButtonsTheme}"
-                    Command="{Binding CloseCommand}"/>
+                    Command="{Binding CloseApplicationCommand}"/>
+
+            <ProgressBar Grid.Column="2" 
+                         HorizontalAlignment="Center" 
+                         Height="20" 
+                         Margin="0,0,0,0" 
+                         VerticalAlignment="Center" 
+                         Width="300"
+                         Value="{Binding ProgressBarValue, Mode=OneWay}"/>
+            <Label Content="{Binding ProgressBarTitle, Mode=OneWay}"
+                   Grid.Column="2" 
+                   HorizontalAlignment="Center" 
+                   Margin="0,0,0,0" 
+                   VerticalAlignment="Center"
+                   Foreground="Black"/>
+
+
 
             <!--<ContentControl Grid.Row="1" 
                             Grid.Column="1"
