@@ -17,11 +17,19 @@ namespace TextHandler.MVVM.ViewModel
 
         public RelayCommand CloseApplicationCommand { get; }
         private CloseApplicationCommand closeApplicationCommand = new CloseApplicationCommand();
-        private string newText;
-        public string NewText { get {return newText; } set { newText = value; OnPropertyChanged("NewText"); } }
+
         
-        private string postText;
-        public string PostText { get {return postText; } set {postText = value; OnPropertyChanged("PostText"); } }
+        private List<string> oldTexts = new List<string>();
+        
+        private List<string> postTexts = new List<string>();
+
+        private string beforeProcText;
+        public string BeforeProcText { get { return beforeProcText; } set { beforeProcText = value; OnPropertyChanged(nameof(BeforeProcText)); } }
+
+        private string afterProcText;
+        public string AfterProcText { get {return afterProcText; } set { afterProcText = value; OnPropertyChanged(nameof(AfterProcText)); } }
+
+
         private IFileService fileService = new FileService();
         private IDialogService dialogService = new DialogService();
 
@@ -54,10 +62,22 @@ namespace TextHandler.MVVM.ViewModel
                 {
                     try
                     {
-                        if (dialogService.SaveFileDialog() == true)
+                        List<string> textForSave = new List<string>();
+                        if (postTexts.Count > 0)
+                            textForSave.AddRange(postTexts);
+                        else
+                            textForSave.AddRange(oldTexts);
+
+                        if (dialogService.SaveFileDialog(textForSave) == true)
                         {
-                            fileService.Save(dialogService.FilePath, PostText);
-                            dialogService.ShowMessage("Файл сохранен");                            
+                            for (int i = 0; i < textForSave.Count; i++)
+                            {
+                                fileService.Save(dialogService.FilePath, textForSave);
+                            }
+                            if (textForSave.Count > 1)
+                                dialogService.ShowMessage("Файлы сохранены");                            
+                            else
+                                dialogService.ShowMessage("Файл сохранен");
                         }
                     }
                     catch (Exception ex)
@@ -170,25 +190,32 @@ namespace TextHandler.MVVM.ViewModel
 
         private async void DoWork(object sender, DoWorkEventArgs e)
         {
+            postTexts = new List<string>();
+            List<string> textInProcess = new List<string>();
             string subName = "";
             var progress = new Progress<int>(value => { ProgressBarValue = value; ProgressBarTitle = $"{subName}   {value}%"; });
-            string textInProcess = newText;
-            List<string> tokens = new List<string>();
+            for (int i = 0; i < oldTexts.Count; i++)
+            {
+                string tempText = oldTexts[i];
+                List<string> tokens = new List<string>();
 
-            ProgressBarValue = 0;
-            subName = $"Tokenization";
-            await Task.Run(() => tokens.AddRange(textProcess.GetTokens(textInProcess, progress)));
+                ProgressBarValue = 0;
+                subName = $"Tokenization";
+                await Task.Run(() => tokens.AddRange(textProcess.GetTokens(tempText, progress)));
 
-            ProgressBarValue = 0;
-            subName = $"Delete words less {minLength} chars";
-            await Task.Run(()=> textInProcess = textProcess.DeleteWord(textInProcess, minLength, tokens, progress));
+                ProgressBarValue = 0;
+                subName = $"Delete words less {minLength} chars";
+                await Task.Run(() => tempText = textProcess.DeleteWord(tempText, minLength, tokens, progress));
 
-            ProgressBarValue = 0;
-            subName = $"Delete chars: {charsForDel}";
-            await Task.Run(()=> textInProcess = textProcess.DeleteChars(textInProcess, charsForDel.ToCharArray(), progress));
+                ProgressBarValue = 0;
+                subName = $"Delete chars: {charsForDel}";
+                await Task.Run(() => tempText = textProcess.DeleteChars(tempText, charsForDel.ToCharArray(), progress));
 
+                textInProcess.Add(tempText);
+            }
+            postTexts.AddRange(textInProcess);
+            AfterProcText = String.Join("\n\n"+ "=======================" +"\n\n", postTexts);
             ProgressBarTitle = "Complete!";
-            PostText = textInProcess;
             ProgressBarValue = 100;
         }
 
@@ -199,11 +226,13 @@ namespace TextHandler.MVVM.ViewModel
 
         private async void TryOpenFileDialog()
         {
+            oldTexts = new List<string>();
             if (dialogService.OpenFileDialog() == true)
             {
                 try
                 {
-                    await Task.Run(() => NewText = fileService.Open(dialogService.FilePath));
+                    await Task.Run(() => oldTexts.AddRange(fileService.Open(dialogService.FilePath)));
+                    BeforeProcText = String.Join("\n\n" + "=======================" + "\n\n", oldTexts);
                 }
                 catch (Exception ex)
                 {

@@ -131,7 +131,7 @@
                 <TextBox
                         Margin="5,0,5,0"
                         TextWrapping="Wrap"
-                        Text="{Binding NewText, UpdateSourceTrigger=PropertyChanged}"
+                        Text="{Binding BeforeProcText, UpdateSourceTrigger=PropertyChanged}"
                         TextAlignment="Left"
                         Foreground="Gray"
                         Background="Transparent"
@@ -149,7 +149,7 @@
                        Grid.Column="3" Grid.Row="1"/>
                 <TextBox Margin="5,0,10,0"
                          TextWrapping="Wrap"
-                         Text="{Binding PostText, UpdateSourceTrigger=PropertyChanged}"
+                         Text="{Binding AfterProcText, UpdateSourceTrigger=PropertyChanged}"
                          TextAlignment="Left"
                          Foreground="White"
                          Height="510"

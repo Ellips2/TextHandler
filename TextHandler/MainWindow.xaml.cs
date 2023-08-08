@@ -18,8 +18,6 @@ namespace TextHandler
 {
     public partial class MainWindow : Window
     {
-        private object movingObject;
-        private double firstXPos, firstYPos;
         public MainWindow()
         {            
             InitializeComponent();
