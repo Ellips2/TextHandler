@@ -56,7 +56,7 @@ namespace TextHandler.MVVM.ViewModel
                     {
                         if (dialogService.SaveFileDialog() == true)
                         {
-                            fileService.Save(dialogService.FilePath, NewText);
+                            fileService.Save(dialogService.FilePath, PostText);
                             dialogService.ShowMessage("Файл сохранен");                            
                         }
                     }
