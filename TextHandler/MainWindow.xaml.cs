@@ -16,11 +16,10 @@ using System.Text.RegularExpressions;
 
 namespace TextHandler
 {
-    /// <summary>
-    /// Interaction logic for MainWindow.xaml
-    /// </summary>
     public partial class MainWindow : Window
     {
+        private object movingObject;
+        private double firstXPos, firstYPos;
         public MainWindow()
         {            
             InitializeComponent();
@@ -30,6 +29,11 @@ namespace TextHandler
         {
             Regex regex = new Regex("[^0-9]+");
             e.Handled = regex.IsMatch(e.Text);
+        }
+
+        private void DragBar_MouseLeftButtonDown(object sender, MouseButtonEventArgs e)
+        {
+            this.DragMove();
         }
     }    
 }

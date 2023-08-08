@@ -30,6 +30,15 @@
                 <RowDefinition/>
             </Grid.RowDefinitions>
 
+            <Border Grid.Row="0" 
+                     Grid.ColumnSpan="4"
+                    x:Name="DragBar" 
+                    Height="50" 
+                    VerticalAlignment="Center"
+                    HorizontalAlignment="Stretch"
+                    Background="#18151f"
+                    MouseLeftButtonDown="DragBar_MouseLeftButtonDown"/>
+            
             <TextBlock Text="Text Handler"
                        VerticalAlignment="Center"
                        HorizontalAlignment="Center"
@@ -143,7 +152,7 @@
                     Margin="10"
                     Style="{StaticResource TitleBarButtonsTheme}"
                     Command="{Binding CloseApplicationCommand}"/>
-
+            
             <ProgressBar Grid.Column="2" 
                          HorizontalAlignment="Center" 
                          Height="20" 
@@ -157,14 +166,6 @@
                    Margin="0,0,0,0" 
                    VerticalAlignment="Center"
                    Foreground="Black"/>
-
-
-
-            <!--<ContentControl Grid.Row="1" 
-                            Grid.Column="1"
-                            Margin="10"
-                            Content="{Binding CurrentView}"/>-->
-
         </Grid>
     </Border>
 </Window>

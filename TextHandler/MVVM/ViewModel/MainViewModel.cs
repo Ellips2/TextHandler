@@ -39,17 +39,7 @@ namespace TextHandler.MVVM.ViewModel
             {
                 return openFileCommand ?? (openFileCommand = new RelayCommand(obj =>
                 {
-                    if (dialogService.OpenFileDialog() == true)
-                    {
-                        //try
-                        //{
-                            fileService.Open(dialogService.FilePath).ContinueWith(task => { NewText = task.Result; });
-                        //}
-                        //catch (Exception ex)
-                        //{
-                        //    dialogService.ShowMessage("Failed to open file! " + ex.Message);
-                        //}
-                    }
+                    TryOpenFileDialog();
                 }));
             }
         }
@@ -199,11 +189,27 @@ namespace TextHandler.MVVM.ViewModel
 
             ProgressBarTitle = "Complete!";
             PostText = textInProcess;
+            ProgressBarValue = 100;
         }
 
         private void ProgressChanged(object sender, ProgressChangedEventArgs e)
         {
             this.ProgressBarValue = e.ProgressPercentage;
+        }
+
+        private async void TryOpenFileDialog()
+        {
+            if (dialogService.OpenFileDialog() == true)
+            {
+                try
+                {
+                    await Task.Run(() => NewText = fileService.Open(dialogService.FilePath));
+                }
+                catch (Exception ex)
+                {
+                    dialogService.ShowMessage("Failed to open file! " + ex.Message);
+                }
+            }
         }
     }
 }
