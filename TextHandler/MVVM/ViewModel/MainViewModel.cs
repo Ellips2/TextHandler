@@ -3,6 +3,8 @@ using TextHandler.Core;
 using System.ComponentModel;
 using System.Threading.Tasks;
 using System.Collections.Generic;
+using System.Collections.ObjectModel;
+using System.Linq;
 
 namespace TextHandler.MVVM.ViewModel
 {
@@ -18,39 +20,19 @@ namespace TextHandler.MVVM.ViewModel
         public RelayCommand CloseApplicationCommand { get; }
         private CloseApplicationCommand closeApplicationCommand = new CloseApplicationCommand();
 
-        
-        private List<string> oldTexts = new List<string>();
-        
-        private List<string> postTexts = new List<string>();
+        private TextFile selectedTextFile = new TextFile();
+        public TextFile SelectedTextFile { get => selectedTextFile; set { selectedTextFile = value; OnPropertyChanged(nameof(SelectedTextFile)); } }
 
-        private string beforeProcText;
-        public string BeforeProcText { get { return beforeProcText; } set { beforeProcText = value; OnPropertyChanged(nameof(BeforeProcText)); } }
-
-        private string afterProcText;
-        public string AfterProcText { get {return afterProcText; } set { afterProcText = value; OnPropertyChanged(nameof(AfterProcText)); } }
-
+        public ObservableCollection<TextFile> TextFiles { get; set; }
 
         private IFileService fileService = new FileService();
         private IDialogService dialogService = new DialogService();
 
-        public MainViewModel(IDialogService dialogService, IFileService fileService)
-        {
-            this.dialogService = dialogService;
-            this.fileService = fileService;
-        }
+        public MainViewModel(IDialogService dialogService, IFileService fileService) { this.dialogService = dialogService; this.fileService = fileService; }
 
         // команда открытия файла
         private RelayCommand openFileCommand;
-        public RelayCommand OpenFileCommand
-        {
-            get
-            {
-                return openFileCommand ?? (openFileCommand = new RelayCommand(obj =>
-                {
-                    TryOpenFileDialog();
-                }));
-            }
-        }
+        public RelayCommand OpenFileCommand { get { return openFileCommand ?? (openFileCommand = new RelayCommand(obj => { TryOpenFileDialog();})); } }
 
         // команда сохранения файла
         private RelayCommand saveFileCommand;
@@ -62,19 +44,13 @@ namespace TextHandler.MVVM.ViewModel
                 {
                     try
                     {
-                        List<string> textForSave = new List<string>();
-                        if (postTexts.Count > 0)
-                            textForSave.AddRange(postTexts);
-                        else
-                            textForSave.AddRange(oldTexts);
-
-                        if (dialogService.SaveFileDialog(textForSave) == true)
+                        if (dialogService.SaveFileDialog(TextFiles.ToList()) == true)
                         {
-                            for (int i = 0; i < textForSave.Count; i++)
+                            for (int i = 0; i < TextFiles.Count; i++)
                             {
-                                fileService.Save(dialogService.FilePath, textForSave);
+                                fileService.Save(dialogService.TextFiles);
                             }
-                            if (textForSave.Count > 1)
+                            if (TextFiles.Count > 1)
                                 dialogService.ShowMessage("Файлы сохранены");                            
                             else
                                 dialogService.ShowMessage("Файл сохранен");
@@ -144,22 +120,7 @@ namespace TextHandler.MVVM.ViewModel
         //    }
         //}
 
-        private int minLength = 0;
-        public int MinLength { get => minLength; set { minLength = value; OnPropertyChanged(nameof(MinLength));} }
-
-        private string charsForDel = "";
-        public string CharsForDel { get => charsForDel; set { charsForDel = value; OnPropertyChanged(nameof(CharsForDel)); } }
-        
-
-        public object CurrentView
-        {
-            get { return _currentView; }
-            set
-            {
-                _currentView = value;
-                OnPropertyChanged();
-            }
-        }
+        public object CurrentView { get { return _currentView; } set { _currentView = value; OnPropertyChanged(); } }
 
         private readonly TextProcess textProcess = new TextProcess();
 
@@ -175,6 +136,7 @@ namespace TextHandler.MVVM.ViewModel
 
         public MainViewModel()
         {
+            TextFiles = new ObservableCollection<TextFile>();
             HomeVM = new HomeViewModel();
             DiscoveryVM = new DiscoveryViewModel();
             CurrentView = HomeVM;
@@ -190,13 +152,12 @@ namespace TextHandler.MVVM.ViewModel
 
         private async void DoWork(object sender, DoWorkEventArgs e)
         {
-            postTexts = new List<string>();
             List<string> textInProcess = new List<string>();
             string subName = "";
             var progress = new Progress<int>(value => { ProgressBarValue = value; ProgressBarTitle = $"{subName}   {value}%"; });
-            for (int i = 0; i < oldTexts.Count; i++)
+            for (int i = 0; i < TextFiles.Count; i++)
             {
-                string tempText = oldTexts[i];
+                string tempText = TextFiles[i].OldText;
                 List<string> tokens = new List<string>();
 
                 ProgressBarValue = 0;
@@ -204,35 +165,35 @@ namespace TextHandler.MVVM.ViewModel
                 await Task.Run(() => tokens.AddRange(textProcess.GetTokens(tempText, progress)));
 
                 ProgressBarValue = 0;
-                subName = $"Delete words less {minLength} chars";
-                await Task.Run(() => tempText = textProcess.DeleteWord(tempText, minLength, tokens, progress));
+                subName = $"Delete words less {TextFiles[i].MinLengthWord} chars";
+                await Task.Run(() => tempText = textProcess.DeleteWord(tempText, TextFiles[i].MinLengthWord, tokens, progress));
 
                 ProgressBarValue = 0;
-                subName = $"Delete chars: {charsForDel}";
-                await Task.Run(() => tempText = textProcess.DeleteChars(tempText, charsForDel.ToCharArray(), progress));
+                subName = $"Delete chars: {TextFiles[i].CharsForDel}";
+                await Task.Run(() => tempText = textProcess.DeleteChars(tempText, TextFiles[i].CharsForDel.ToCharArray(), progress));
 
-                textInProcess.Add(tempText);
+                TextFiles[i].NewText = tempText;
             }
-            postTexts.AddRange(textInProcess);
-            AfterProcText = String.Join("\n\n"+ "=======================" +"\n\n", postTexts);
             ProgressBarTitle = "Complete!";
             ProgressBarValue = 100;
         }
 
-        private void ProgressChanged(object sender, ProgressChangedEventArgs e)
-        {
-            this.ProgressBarValue = e.ProgressPercentage;
-        }
+        private void ProgressChanged(object sender, ProgressChangedEventArgs e) { this.ProgressBarValue = e.ProgressPercentage; }
 
         private async void TryOpenFileDialog()
         {
-            oldTexts = new List<string>();
             if (dialogService.OpenFileDialog() == true)
             {
                 try
                 {
-                    await Task.Run(() => oldTexts.AddRange(fileService.Open(dialogService.FilePath)));
-                    BeforeProcText = String.Join("\n\n" + "=======================" + "\n\n", oldTexts);
+                    List<TextFile> _textFiles = new List<TextFile>();
+                    await Task.Run(() => _textFiles = fileService.Open(dialogService.TextFiles));
+                    TextFiles.Clear();
+                    foreach (var t in _textFiles)
+                    {
+                        TextFiles.Add(t);
+                    }
+                    selectedTextFile = TextFiles[0];
                 }
                 catch (Exception ex)
                 {

@@ -6,7 +6,7 @@
         xmlns:local="clr-namespace:TextHandler"
         xmlns:viewModel="clr-namespace:TextHandler.MVVM.ViewModel"
         mc:Ignorable="d"
-        Title="MainWindow" Height="600" Width="900"
+        Title="MainWindow" Height="600" Width="1000"
         WindowStyle="None"
         ResizeMode="NoResize"
         Background="Transparent"
@@ -20,7 +20,7 @@
         <Grid>
             <Grid.ColumnDefinitions>
                 <ColumnDefinition Width="200"/>
-                <ColumnDefinition Width="100"/>
+                <ColumnDefinition Width="200"/>
                 <ColumnDefinition/>
                 <ColumnDefinition/>
             </Grid.ColumnDefinitions>
@@ -52,7 +52,7 @@
                         Foreground="White"
                         FontSize="14"
                         Style="{StaticResource SideBarButtonTheme}"                             
-                        Command="{Binding OpenFileCommand}"/>
+                        Command="{Binding OpenFileCommand}"/>                
                 <Label Content="Min Word Length:"
                        Grid.Row="1"
                        Grid.Column="0"
@@ -60,7 +60,7 @@
                        FontSize="13"
                        FontFamily="Arial"
                        Margin="0,0,0,0"/>
-                <TextBox Text="{Binding MinLength, UpdateSourceTrigger=PropertyChanged}"
+                <TextBox Text="{Binding SelectedTextFile.MinLengthWord, UpdateSourceTrigger=PropertyChanged}"
                          Grid.Column="1"
                          Height="40"
                          Width="200"
@@ -79,7 +79,7 @@
                        FontSize="13"
                        FontFamily="Arial"
                        Margin="0,0,0,0"/>
-                <TextBox Text="{Binding CharsForDel, UpdateSourceTrigger=PropertyChanged}"
+                <TextBox Text="{Binding SelectedTextFile.CharsForDel, UpdateSourceTrigger=PropertyChanged}"
                          Grid.Column="1"
                          Height="40"
                          Width="200"
@@ -131,7 +131,7 @@
                 <TextBox
                         Margin="5,0,5,0"
                         TextWrapping="Wrap"
-                        Text="{Binding BeforeProcText, UpdateSourceTrigger=PropertyChanged}"
+                        Text="{Binding SelectedTextFile.OldText, UpdateSourceTrigger=PropertyChanged}"
                         TextAlignment="Left"
                         Foreground="Gray"
                         Background="Transparent"
@@ -149,7 +149,7 @@
                        Grid.Column="3" Grid.Row="1"/>
                 <TextBox Margin="5,0,10,0"
                          TextWrapping="Wrap"
-                         Text="{Binding AfterProcText, UpdateSourceTrigger=PropertyChanged}"
+                         Text="{Binding SelectedTextFile.NewText, UpdateSourceTrigger=PropertyChanged}"
                          TextAlignment="Left"
                          Foreground="White"
                          Height="510"
@@ -180,6 +180,24 @@
                    Margin="0,0,0,0" 
                    VerticalAlignment="Center"
                    Foreground="Black"/>
+            <ListBox Grid.Column="1" 
+                     Grid.Row="1"
+                     Background="Transparent"
+                     Margin="0,40,0,1"
+                     ScrollViewer.VerticalScrollBarVisibility="Auto" 
+                     ItemsSource="{Binding TextFiles}"
+                     SelectedItem="{Binding SelectedTextFile}"
+                     SelectionMode="Extended">
+                    <ListBox.ItemTemplate>
+                        <DataTemplate>
+                            <StackPanel Margin="5">
+                            <TextBlock FontSize="14" Foreground="White" Text="{Binding Path=Name }" />
+                            <TextBlock FontSize="10" Foreground="White" Text="{Binding Path=MinLengthWord}" />
+                            <TextBlock FontSize="10" Foreground="White" Text="{Binding Path=CharsForDel}" />
+                            </StackPanel>
+                        </DataTemplate>
+                    </ListBox.ItemTemplate>                    
+            </ListBox>
         </Grid>
     </Border>
 </Window>

@@ -10,19 +10,18 @@ namespace TextHandler.Core
     public interface IDialogService
     {
         void ShowMessage(string message);   // показ сообщения
-        List<string> FilePath { get; set; }   // путь к выбранному файлу
-
+        List<TextFile> TextFiles{ get; set; }   // путь к выбранному файлу
         bool OpenFileDialog();  // открытие файла
-        bool SaveFileDialog(List<string> files);  // сохранение файла
+        bool SaveFileDialog(List<TextFile> files);  // сохранение файла
     }
 
     public class DialogService : IDialogService
     {
-        public List<string> FilePath { get; set; }
+        public List<TextFile> TextFiles { get; set; }
 
         public bool OpenFileDialog()
         {
-            FilePath = new List<string>();
+            TextFiles = new List<TextFile>();
             OpenFileDialog openFileDialog = new OpenFileDialog();
             openFileDialog.Multiselect = true;
             openFileDialog.Filter = "All files|*.*|Word|*.docx|Word 97-2003|*.doc|PDF files|*.pdf|Text files|*.txt";
@@ -30,15 +29,19 @@ namespace TextHandler.Core
 
             if (dialogOk == true)
             {
-                FilePath.AddRange(openFileDialog.FileNames.ToList());
+                for (int i = 0; i < openFileDialog.FileNames.Length; i++)
+                {
+                    TextFile tf = new TextFile();
+                    tf.Path = openFileDialog.FileNames[i];
+                    TextFiles.Add(tf);
+                }
                 return true;
             }
             return false;
         }        
 
-        public bool SaveFileDialog(List<string> files)
+        public bool SaveFileDialog(List<TextFile> files)
         {
-            FilePath = new List<string>();
             SaveFileDialog saveFileDialog = new SaveFileDialog();
             saveFileDialog.Filter = "All files|*.*|Word|*.docx|Word 97-2003|*.doc|PDF files|*.pdf|Text files|*.txt";
             if (saveFileDialog.ShowDialog() == true)
@@ -47,7 +50,7 @@ namespace TextHandler.Core
                 {
                     string newPath = saveFileDialog.FileName;
                     newPath = newPath.Insert(newPath.IndexOf(Path.GetExtension(newPath)), "(" + i + ") ");
-                    FilePath.Add(newPath);
+                    files[i].Path = newPath;
                 }
                 return true;
             }

@@ -1,41 +1,45 @@
 ﻿using SautinSoft.Document;
 using System;
 using System.Collections.Generic;
+using System.IO;
 
 namespace TextHandler.Core
 {
     public interface IFileService
     {
-        List<string> Open(List<string> filename);
-        void Save(List<string> filePath, List<string> postProccText);
+        List<TextFile> Open(List<TextFile> files);
+        void Save(List<TextFile> files);
     }
     public class FileService : IFileService
     {
-        public List<string> Open(List<string> filePath)
+        public List<TextFile> Open(List<TextFile> files)
         {
-            List<string> allText = new List<string>();
-            for (int i = 0; i < filePath.Count; i++)
+            for (int i = 0; i < files.Count; i++)
             {
                 try
                 {
-                    DocumentCore dc = DocumentCore.Load(filePath[i]);
-                    allText.Add(dc.Content.ToString());
+                    DocumentCore dc = DocumentCore.Load(files[i].Path);
+                    files[i].OldText = dc.Content.ToString();
+                    files[i].Name = Path.GetFileName(files[i].Path);
                 }
                 catch (Exception ex)
                 {
-                    allText.Add(filePath[i] + "\n\n" + ex);
+                    files[i].OldText = files[i].Name + "\n\n" + ex;
                 }
             }            
-            return allText;
+            return files;
         }
 
-        public void Save(List<string> filePath, List<string> postProccText)
+        public void Save(List<TextFile> files)
         {
-            for (int i = 0; i < postProccText.Count; i++)
+            for (int i = 0; i < files.Count; i++)
             {
                 DocumentCore dc = new DocumentCore();
-                dc.Content.End.Insert(postProccText[i]);
-                dc.Save(filePath[i]);
+                if (files[i].NewText != "")
+                    dc.Content.End.Insert(files[i].NewText);
+                else
+                    dc.Content.End.Insert(files[i].OldText);
+                dc.Save(files[i].Path);
                 //System.Diagnostics.Process.Start(new System.Diagnostics.ProcessStartInfo(filePath[i]) { UseShellExecute = true });
             }
         }
