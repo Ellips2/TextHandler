@@ -14,4 +14,8 @@
     <PackageReference Include="Tokenizer" Version="2.2.2" />
   </ItemGroup>
 
+  <ItemGroup>
+    <Folder Include="MVVM\View\" />
+  </ItemGroup>
+
 </Project>
