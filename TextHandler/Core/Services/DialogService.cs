@@ -43,7 +43,7 @@ namespace TextHandler.Core
         public bool SaveFileDialog(List<TextFile> files)
         {
             SaveFileDialog saveFileDialog = new SaveFileDialog();
-            saveFileDialog.Filter = "All files|*.*|Word|*.docx|Word 97-2003|*.doc|PDF files|*.pdf|Text files|*.txt";
+            saveFileDialog.Filter = "Text files|*.txt|Word|*.docx|Word 97-2003|*.doc|PDF files|*.pdf|All files|*.*";
             if (saveFileDialog.ShowDialog() == true)
             {
                 for (int i = 0; i < files.Count; i++)

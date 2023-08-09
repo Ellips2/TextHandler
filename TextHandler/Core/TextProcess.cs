@@ -44,7 +44,7 @@ namespace TextHandler.Core
 
             for (int i = 0; i < tokens.Count; i++) 
             {
-                if (tokens[i].Length <= minLength && char.IsLetter(tokens[i][0])) //Отбираем все токены, являющиеся словами с недостаточной длинной и не являющиеся знаками препинания
+                if (tokens[i].Length <= minLength && !char.IsPunctuation(tokens[i][0]) && tokens[i] != "++") //Отбираем все токены, являющиеся словами с недостаточной длинной и не являющиеся знаками препинания
                 {
                     Regex reg = new Regex($@"\b{tokens[i]}\b"); //Формируем текст без неподходящих слов
                     finalText = reg.Replace(finalText, "", 1);

@@ -10,15 +10,8 @@ namespace TextHandler.MVVM.ViewModel
 {
     internal class MainViewModel : ObservableObject
     {
-        public RelayCommand HomeViewCommand { get; set; }
-        public RelayCommand DiscoveryViewCommand { get; set; }
-        public HomeViewModel HomeVM { get; set; }
-        public DiscoveryViewModel DiscoveryVM { get; set; }
-
-        private object _currentView;
-
-        public RelayCommand CloseApplicationCommand { get; }
         private CloseApplicationCommand closeApplicationCommand = new CloseApplicationCommand();
+        public RelayCommand CloseApplicationCommand { get; }
 
         private TextFile selectedTextFile = new TextFile();
         public TextFile SelectedTextFile { get => selectedTextFile; set { selectedTextFile = value; OnPropertyChanged(nameof(SelectedTextFile)); } }
@@ -30,11 +23,9 @@ namespace TextHandler.MVVM.ViewModel
 
         public MainViewModel(IDialogService dialogService, IFileService fileService) { this.dialogService = dialogService; this.fileService = fileService; }
 
-        // команда открытия файла
         private RelayCommand openFileCommand;
         public RelayCommand OpenFileCommand { get { return openFileCommand ?? (openFileCommand = new RelayCommand(obj => { TryOpenFileDialog();})); } }
 
-        // команда сохранения файла
         private RelayCommand saveFileCommand;
         public RelayCommand SaveFileCommand
         {
@@ -64,64 +55,6 @@ namespace TextHandler.MVVM.ViewModel
             }
         }
 
-        //// команда добавления нового объекта
-        //private RelayCommand addCommand;
-        //public RelayCommand AddCommand
-        //{
-        //    get
-        //    {
-        //        return addCommand ??
-        //          (addCommand = new RelayCommand(obj =>
-        //          {
-        //              Phone phone = new Phone();
-        //              Phones.Insert(0, phone);
-        //              SelectedPhone = phone;
-        //          }));
-        //    }
-        //}
-
-        //private RelayCommand removeCommand;
-        //public RelayCommand RemoveCommand
-        //{
-        //    get
-        //    {
-        //        return removeCommand ??
-        //          (removeCommand = new RelayCommand(obj =>
-        //          {
-        //              Phone phone = obj as Phone;
-        //              if (phone != null)
-        //              {
-        //                  Phones.Remove(phone);
-        //              }
-        //          },
-        //         (obj) => Phones.Count > 0));
-        //    }
-        //}
-        //private RelayCommand doubleCommand;
-        //public RelayCommand DoubleCommand
-        //{
-        //    get
-        //    {
-        //        return doubleCommand ??
-        //          (doubleCommand = new RelayCommand(obj =>
-        //          {
-        //              Phone phone = obj as Phone;
-        //              if (phone != null)
-        //              {
-        //                  Phone phoneCopy = new Phone
-        //                  {
-        //                      Company = phone.Company,
-        //                      Price = phone.Price,
-        //                      Title = phone.Title
-        //                  };
-        //                  Phones.Insert(0, phoneCopy);
-        //              }
-        //          }));
-        //    }
-        //}
-
-        public object CurrentView { get { return _currentView; } set { _currentView = value; OnPropertyChanged(); } }
-
         private readonly TextProcess textProcess = new TextProcess();
 
         private readonly BackgroundWorker worker;
@@ -136,12 +69,7 @@ namespace TextHandler.MVVM.ViewModel
 
         public MainViewModel()
         {
-            TextFiles = new ObservableCollection<TextFile>();
-            HomeVM = new HomeViewModel();
-            DiscoveryVM = new DiscoveryViewModel();
-            CurrentView = HomeVM;
-            HomeViewCommand = new RelayCommand(o => { CurrentView = HomeVM; });
-            DiscoveryViewCommand = new RelayCommand(o => { CurrentView = DiscoveryVM; });
+            TextFiles = new ObservableCollection<TextFile>();            
             CloseApplicationCommand = new RelayCommand(closeApplicationCommand.Execute, closeApplicationCommand.CanExecute);
             
             startWorkCommand = new RelayCommand(o => worker.RunWorkerAsync(), o => !worker.IsBusy);
