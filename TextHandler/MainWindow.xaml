@@ -3,7 +3,6 @@
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-        xmlns:local="clr-namespace:TextHandler"
         xmlns:viewModel="clr-namespace:TextHandler.MVVM.ViewModel"
         mc:Ignorable="d"
         Title="MainWindow" Height="600" Width="1000"
@@ -53,7 +52,7 @@
                         FontSize="14"
                         Style="{StaticResource SideBarButtonTheme}"                             
                         Command="{Binding OpenFileCommand}"/>                
-                <Label Content="Min Word Length:"
+                <Label Content="Min word length:"
                        Grid.Row="1"
                        Grid.Column="0"
                        Foreground="#CFCFCF"
@@ -103,16 +102,10 @@
                         FontSize="14"
                         Style="{StaticResource SideBarButtonTheme}"
                         Command="{Binding SaveFileCommand}" />
-                <Button Content="Save in One"
-                        Height="50" 
-                        Foreground="White"
-                        FontSize="14"                        
-                        Style="{StaticResource SideBarButtonTheme}"
-                        Command="{Binding SaveFileCommand}" />
             </StackPanel>
 
             <StackPanel Grid.Row="1" Grid.Column="1" Background="#222c">
-                <Label Content="YourFiles" 
+                <Label Content="Your Files" 
                    Foreground="White"
                    HorizontalAlignment="Center"
                    VerticalAlignment="Top"

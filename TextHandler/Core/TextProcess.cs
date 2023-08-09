@@ -13,14 +13,16 @@ namespace TextHandler.Core
         {
             List<string> lines = new List<string>();
             List<string> tokens = new List<string>();
+
             using var modelIn = new java.io.FileInputStream(GetModel("opennlp-en-ud-ewt-tokens-1.0-1.9.3.bin"));
             var model = new opennlp.tools.tokenize.TokenizerModel(modelIn);
             var tokenizer = new opennlp.tools.tokenize.TokenizerME(model);
-
+             
+            text = text.Replace("+", string.Empty);//Удаляем Nested quantifier '+'
             lines.AddRange(text.Split('\n'));
-            lines.RemoveAll((x)=> x == "\r"); //Удаляем мусор в тексте                       
+            lines.RemoveAll((x)=> x == "\r"); //Удаляем мусор в тексте                                   
 
-            for (int i = 0; i < lines.Count; i++)
+            for (int i = 0; i < lines.Count; i++)   //Обрабатываем текст построчно, чтобы отображать прогресс в ProgressBar
             {
                 tokens.AddRange(tokenizer.tokenize(lines[i]).ToList());
 
@@ -44,7 +46,8 @@ namespace TextHandler.Core
 
             for (int i = 0; i < tokens.Count; i++) 
             {
-                if (tokens[i].Length <= minLength && !char.IsPunctuation(tokens[i][0]) && tokens[i] != "++") //Отбираем все токены, являющиеся словами с недостаточной длинной и не являющиеся знаками препинания
+                //Отбираем все токены, являющиеся словами с недостаточной длинной и не являющиеся знаками препинания
+                if (tokens[i].Length <= minLength && !char.IsPunctuation(tokens[i][0]) && tokens[i] != "C++") 
                 {
                     Regex reg = new Regex($@"\b{tokens[i]}\b"); //Формируем текст без неподходящих слов
                     finalText = reg.Replace(finalText, "", 1);

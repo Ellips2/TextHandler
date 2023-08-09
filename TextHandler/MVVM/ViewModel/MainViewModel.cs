@@ -10,53 +10,28 @@ namespace TextHandler.MVVM.ViewModel
 {
     internal class MainViewModel : ObservableObject
     {
-        private CloseApplicationCommand closeApplicationCommand = new CloseApplicationCommand();
+        private readonly CloseApplicationCommand closeApplicationCommand = new CloseApplicationCommand();
         public RelayCommand CloseApplicationCommand { get; }
 
+        #region [Работа с файлами]
+        public ObservableCollection<TextFile> TextFiles { get; set; }
+        private readonly TextProcess textProcess = new TextProcess();
         private TextFile selectedTextFile = new TextFile();
         public TextFile SelectedTextFile { get => selectedTextFile; set { selectedTextFile = value; OnPropertyChanged(nameof(SelectedTextFile)); } }
+        #endregion
 
-        public ObservableCollection<TextFile> TextFiles { get; set; }
-
-        private IFileService fileService = new FileService();
-        private IDialogService dialogService = new DialogService();
-
-        public MainViewModel(IDialogService dialogService, IFileService fileService) { this.dialogService = dialogService; this.fileService = fileService; }
+        #region [Диалоговые окна]
+        private readonly IFileService fileService = new FileService();
+        private readonly IDialogService dialogService = new DialogService();
 
         private RelayCommand openFileCommand;
         public RelayCommand OpenFileCommand { get { return openFileCommand ?? (openFileCommand = new RelayCommand(obj => { TryOpenFileDialog();})); } }
 
         private RelayCommand saveFileCommand;
-        public RelayCommand SaveFileCommand
-        {
-            get
-            {
-                return saveFileCommand ?? (saveFileCommand = new RelayCommand(obj =>
-                {
-                    try
-                    {
-                        if (dialogService.SaveFileDialog(TextFiles.ToList()) == true)
-                        {
-                            for (int i = 0; i < TextFiles.Count; i++)
-                            {
-                                fileService.Save(dialogService.TextFiles);
-                            }
-                            if (TextFiles.Count > 1)
-                                dialogService.ShowMessage("Файлы сохранены");                            
-                            else
-                                dialogService.ShowMessage("Файл сохранен");
-                        }
-                    }
-                    catch (Exception ex)
-                    {
-                        dialogService.ShowMessage("Failed to save file! " + ex.Message);
-                    }
-                }));
-            }
-        }
+        public RelayCommand SaveFileCommand { get { return saveFileCommand ?? (saveFileCommand = new RelayCommand(obj => { TrySaveFiles(); })); } }
+        #endregion
 
-        private readonly TextProcess textProcess = new TextProcess();
-
+        #region [ProgressBar]
         private readonly BackgroundWorker worker;
         private int progressBarValue = 0;
         public int ProgressBarValue { get => progressBarValue; set { progressBarValue = value; OnPropertyChanged(nameof(ProgressBarValue)); } }
@@ -66,6 +41,7 @@ namespace TextHandler.MVVM.ViewModel
 
         private RelayCommand startWorkCommand;
         public RelayCommand StartWorkCommand { get { return this.startWorkCommand; } }
+        #endregion
 
         public MainViewModel()
         {
@@ -78,6 +54,7 @@ namespace TextHandler.MVVM.ViewModel
             worker.ProgressChanged += ProgressChanged;
         }
 
+        #region [Методы для ProgressBar]
         private async void DoWork(object sender, DoWorkEventArgs e)
         {
             List<string> textInProcess = new List<string>();
@@ -107,7 +84,9 @@ namespace TextHandler.MVVM.ViewModel
         }
 
         private void ProgressChanged(object sender, ProgressChangedEventArgs e) { this.ProgressBarValue = e.ProgressPercentage; }
+        #endregion
 
+        #region [Методы для диалоговых окон]
         private async void TryOpenFileDialog()
         {
             if (dialogService.OpenFileDialog() == true)
@@ -129,5 +108,28 @@ namespace TextHandler.MVVM.ViewModel
                 }
             }
         }
+
+        private async void TrySaveFiles()
+        {            
+            if (dialogService.SaveFileDialog(TextFiles.ToList()) == true)
+            {
+                try
+                {
+                    for (int i = 0; i < TextFiles.Count; i++)
+                    {
+                        await Task.Run(() => fileService.Save(dialogService.TextFiles));
+                    }
+                    if (TextFiles.Count > 1)
+                        dialogService.ShowMessage("Файлы сохранены");
+                    else
+                        dialogService.ShowMessage("Файл сохранен");
+                }
+                catch (Exception ex)
+                {
+                    dialogService.ShowMessage("Failed to save file! " + ex.Message);
+                }
+            }            
+        }
+        #endregion
     }
 }

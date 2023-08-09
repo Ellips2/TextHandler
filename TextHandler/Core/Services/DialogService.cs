@@ -2,17 +2,16 @@
 using Microsoft.Win32;
 using System.Windows;
 using System.Collections.Generic;
-using System.Linq;
 using System.IO;
 
 namespace TextHandler.Core
 {
     public interface IDialogService
     {
-        void ShowMessage(string message);   // показ сообщения
-        List<TextFile> TextFiles{ get; set; }   // путь к выбранному файлу
-        bool OpenFileDialog();  // открытие файла
-        bool SaveFileDialog(List<TextFile> files);  // сохранение файла
+        void ShowMessage(string message);
+        List<TextFile> TextFiles{ get; set; }
+        bool OpenFileDialog();
+        bool SaveFileDialog(List<TextFile> files);
     }
 
     public class DialogService : IDialogService

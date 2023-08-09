@@ -24,7 +24,7 @@ namespace TextHandler.Core
                 }
                 catch (Exception ex)
                 {
-                    files[i].OldText = files[i].Name + "\n\n" + ex;
+                    files[i].OldText = files[i].Path + "\n\n" + ex;
                 }
             }            
             return files;
@@ -39,8 +39,9 @@ namespace TextHandler.Core
                     dc.Content.End.Insert(files[i].NewText);
                 else
                     dc.Content.End.Insert(files[i].OldText);
-                dc.Save(files[i].Path);
-                //System.Diagnostics.Process.Start(new System.Diagnostics.ProcessStartInfo(filePath[i]) { UseShellExecute = true });
+
+                if (Path.GetExtension(files[i].Path) != "")
+                    dc.Save(files[i].Path);            
             }
         }
     }
