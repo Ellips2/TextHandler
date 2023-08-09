@@ -5,10 +5,6 @@ VisualStudioVersion = 16.0.33920.266
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "TextHandler", "TextHandler\TextHandler.csproj", "{B457B51C-AE11-4781-B59C-560F41E9850D}"
 EndProject
-Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Test", "Test", "{2473695A-6E5B-48B3-B22B-EA392C9BCD6E}"
-EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TestConsole", "TestConsole\TestConsole.csproj", "{E6107D34-2765-4148-AECE-4723F4C7B66A}"
-EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -19,16 +15,9 @@ Global
 		{B457B51C-AE11-4781-B59C-560F41E9850D}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{B457B51C-AE11-4781-B59C-560F41E9850D}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{B457B51C-AE11-4781-B59C-560F41E9850D}.Release|Any CPU.Build.0 = Release|Any CPU
-		{E6107D34-2765-4148-AECE-4723F4C7B66A}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{E6107D34-2765-4148-AECE-4723F4C7B66A}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{E6107D34-2765-4148-AECE-4723F4C7B66A}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{E6107D34-2765-4148-AECE-4723F4C7B66A}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
-	EndGlobalSection
-	GlobalSection(NestedProjects) = preSolution
-		{E6107D34-2765-4148-AECE-4723F4C7B66A} = {2473695A-6E5B-48B3-B22B-EA392C9BCD6E}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {52D08DC6-F9DA-48A1-98A7-0A11DD36017E}
