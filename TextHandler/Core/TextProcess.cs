@@ -34,7 +34,8 @@ namespace TextHandler.Core
         private string GetModel(string fileName)
         {
             var asmFolder = Environment.CurrentDirectory;
-            var filePath = asmFolder + "\\" + fileName;
+            int ind = asmFolder.LastIndexOf("bin");
+            var filePath = asmFolder.Substring(0, ind) + fileName;
             if (!File.Exists(filePath))
                 throw new FileNotFoundException(filePath);
             return filePath;
