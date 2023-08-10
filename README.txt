@@ -15,3 +15,5 @@ Requirments:
 .Net Core 3.1
 Visual Studio 2019
 OpenNLP 1.3.5
+SautinSoft.Document
+Prism
